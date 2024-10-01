@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exercice 2: Déplacement du Cube sans Physics-System</title>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <style>
+    body { margin: 0; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+
+<a-scene>
+  <!-- Mặt phẳng làm mặt đất -->
+  <a-plane position="0 0 0" rotation="-90 0 0" width="30" height="30" color="#7BC8A4"></a-plane>
+
+  <!-- Khối lập phương đại diện cho người chơi (Player) -->
+  <a-box id="player" position="0 0.5 0" width="1" height="1" depth="1" color="#4CC3D9"></a-box>
+
+  <!-- Camera -->
+  <a-entity camera position="0 2 5"></a-entity>
+
+  <!-- Ánh sáng -->
+  <a-light type="ambient" intensity="0.7"></a-light>
+  <a-light type="directional" position="5 10 5" intensity="1"></a-light>
+</a-scene>
+
+<script>
+  const player = document.querySelector('#player');
+  const maxSpeed = 0.1;  // Vận tốc tối đa
+  const acceleration = 0.05;  // Tốc độ tăng tốc
+
+  // Biến điều khiển di chuyển
+  let keys = {
+    forward: false,
+    backward: false,
+    left: false,
+    right: false
+  };
+
+  let position = player.getAttribute('position');  // Lấy vị trí hiện tại của player
+
+  // Lắng nghe sự kiện nhấn phím
+  document.addEventListener('keydown', (event) => {
+    switch (event.code) {
+      case 'KeyW':
+        keys.forward = true;  // Đánh dấu cờ khi nhấn W
+        break;
+      case 'KeyS':
+        keys.backward = true;  // Đánh dấu cờ khi nhấn S
+        break;
+      case 'KeyA':
+        keys.left = true;  // Đánh dấu cờ khi nhấn A
+        break;
+      case 'KeyD':
+        keys.right = true;  // Đánh dấu cờ khi nhấn D
+        break;
+    }
+  });
+
+  // Lắng nghe sự kiện thả phím
+  document.addEventListener('keyup', (event) => {
+    switch (event.code) {
+      case 'KeyW':
+        keys.forward = false;  // Hủy đánh dấu khi thả W
+        break;
+      case 'KeyS':
+        keys.backward = false;
+        break;
+      case 'KeyA':
+        keys.left = false;
+        break;
+      case 'KeyD':
+        keys.right = false;
+        break;
+    }
+  });
+
+  // Cập nhật vị trí của Player và xử lý di chuyển chéo
+  function updatePlayerMovement() {
+    let velocityX = 0, velocityZ = 0;
+
+    // Xác định vận tốc dựa trên trạng thái của các phím
+    if (keys.forward) {
+      velocityZ -= maxSpeed;  // Tiến lên
+    }
+    if (keys.backward) {
+      velocityZ += maxSpeed;  // Lùi lại
+    }
+    if (keys.left) {
+      velocityX -= maxSpeed;  // Sang trái
+    }
+    if (keys.right) {
+      velocityX += maxSpeed;  // Sang phải
+    }
+
+    // Cập nhật vị trí của Player
+    position.x += velocityX;
+    position.z += velocityZ;
+    player.setAttribute('position', position);
+
+    requestAnimationFrame(updatePlayerMovement);  // Cập nhật liên tục để xử lý di chuyển
+  }
+
+  // Gọi hàm cập nhật
+  updatePlayerMovement();
+
+</script>
+
+</body>
+</html>
